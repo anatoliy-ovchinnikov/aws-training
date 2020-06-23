@@ -17,7 +17,7 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
             marginRight: '16px'
         },
         imgControl: {
-            width: '100%'
+            width: '500px'
         }
     };
 
