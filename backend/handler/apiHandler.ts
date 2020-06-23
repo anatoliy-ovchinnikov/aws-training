@@ -82,9 +82,17 @@ export class ApiHandler extends core.Construct {
 
         const apiResource = api.root.addResource('api');
         const v1Resource = apiResource.addResource('v1');
-        const dataResource = v1Resource.addResource('data');
+        const dataResource = v1Resource.addResource('data', {
+            defaultCorsPreflightOptions: {
+                allowOrigins: apiGateway.Cors.ALL_ORIGINS
+            }
+        });
         const dataByIdResource = dataResource.addResource('{id}');
-        const imageResource = v1Resource.addResource('images');
+        const imageResource = v1Resource.addResource('images', {
+            defaultCorsPreflightOptions: {
+                allowOrigins: apiGateway.Cors.ALL_ORIGINS
+            }
+        });
 
         dataResource.addMethod('GET', getListApiHandler);
         dataResource.addMethod('POST', postHandler);
