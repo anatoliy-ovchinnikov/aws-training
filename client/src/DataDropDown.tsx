@@ -7,10 +7,6 @@ import Select from '@material-ui/core/Select';
 import DropDownDataPropsModel from './model/DropDownDataPropsModel';
 
 class DataDropDown extends React.Component<DropDownDataPropsModel, {}> {
-    constructor(props: any) {
-        super(props);
-    }
-
     render() {
         return (
             <FormControl>
