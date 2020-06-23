@@ -7,45 +7,36 @@ function uuidv4() {
     });
 }
 
-exports.handler = async function (event: any) {
-    if (!event.body) {
-        return { statusCode: 400, body: 'Invalid request, you are missing the parameter body' };
-    }
-
-    const item = typeof event.body == 'object' ? event.body : JSON.parse(event.body);
-
-    console.log('Body: ' + JSON.stringify(item));
-
+exports.handler = (event: any, context:any, callback:any) => {
+    const item = JSON.parse(event.body);
     const imageId = uuidv4();
     const decodedImage = Buffer.from(item.image, 'base64');
+
     const s3 = new AWS.S3();
     const params = {
-        Bucket: process.env.BUCKET_NAME || '',
-        Key: imageId,
-        Body: decodedImage,
-        ACL: "public-read"
+        "Bucket": process.env.BUCKET_NAME || '',
+        "Key": imageId + ".png",
+        "Body": decodedImage,
+        "ContentType " : "mime/png",
+        "ACL": "public-read"
     }
 
-    return s3.upload(params, (err: any, data: any) => {
+    s3.upload(params, (err: any, data: any) => {
         if (err) {
-            return {
-                statusCode: 400,
-                headers: {
-                    "Access-Control-Allow-Origin": "*"
-                },
-                body: JSON.stringify(err) + ' - error object'
-            }
+            callback(err, null);
         } else {
-            return {
-                statusCode: 200,
-                headers: {
+            const result = {
+                id: imageId,
+                data: JSON.stringify(data)
+            }
+            const response = {
+                "statusCode": 200,
+                "headers": {
                     "Access-Control-Allow-Origin": "*"
                 },
-                body: {
-                    id: imageId,
-                    data: JSON.stringify(data)
-                }
+                "body": JSON.stringify(result)
             };
+            callback(null, response);
         }
     });
 }

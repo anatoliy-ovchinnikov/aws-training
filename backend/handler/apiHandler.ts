@@ -30,6 +30,15 @@ export class ApiHandler extends core.Construct {
             }
         });
 
+        const getImageFunction = new lambda.Function(this, 'GetImageFunction', {
+            runtime: lambda.Runtime.NODEJS_12_X,
+            code: lambda.Code.fromAsset('lambda'),
+            handler: 'getImageFromS3.handler',
+            environment: {
+                BUCKET_NAME: itemsBucket.bucketName
+            }
+        });
+
         const getListFunction = new lambda.Function(this, 'GetListFunction', {
             runtime: lambda.Runtime.NODEJS_12_X,
             code: lambda.Code.fromAsset('lambda'),
@@ -61,6 +70,7 @@ export class ApiHandler extends core.Construct {
         dynamoItemsTable.grantReadWriteData(getByIdFunction);
         dynamoItemsTable.grantReadWriteData(postDataFunction);
         itemsBucket.grantReadWrite(uploadImageFunction);
+        itemsBucket.grantRead(getImageFunction);
 
         const api = new apiGateway.RestApi(this, 'api');
 
@@ -68,6 +78,7 @@ export class ApiHandler extends core.Construct {
         const getByIdHandler = new apiGateway.LambdaIntegration(getByIdFunction);
         const postHandler = new apiGateway.LambdaIntegration(postDataFunction);
         const imageHandler = new apiGateway.LambdaIntegration(uploadImageFunction);
+        const getImageHandler = new apiGateway.LambdaIntegration(getImageFunction);
 
         const apiResource = api.root.addResource('api');
         const v1Resource = apiResource.addResource('v1');
@@ -79,5 +90,6 @@ export class ApiHandler extends core.Construct {
         dataResource.addMethod('POST', postHandler);
         dataByIdResource.addMethod('GET', getByIdHandler);
         imageResource.addMethod('POST', imageHandler);
+        imageResource.addMethod('GET', getImageHandler);
     }
 }

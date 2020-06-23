@@ -31,16 +31,34 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    arrayBufferToBase64 = (buffer: any) => {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
     onSelect = (event: any) => {
         const selectedItem = this.state.items.find(e => e.id === event.target.value);
+        if(!selectedItem) {
+            return;
+        }
 
-        this.setState({ selectedLink: selectedItem?.link })
+        this.api.GetImageById(selectedItem.id)
+            .then((data) => {
+                const base64String = this.arrayBufferToBase64(data.Body.data);
+                this.setState({ selectedLink: "data:image/png;base64," + base64String })
+            });
     }
 
     onSubmit = (data: any, callback: Function) => {
         this.api.UploadImage(data.file)
             .then((result) => {
                 data.id = result.id;
+                data.link = result.data.Location;
                 this.api.SaveData(data)
                     .then(() => {
                         var items = this.state.items.slice();
