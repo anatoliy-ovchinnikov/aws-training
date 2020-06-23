@@ -19,11 +19,17 @@ exports.handler = async function (event: any) {
 
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            },
             body: JSON.stringify(response.Item)
         };
     } catch (dbError) {
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            },
             body: JSON.stringify(dbError)
         };
     }

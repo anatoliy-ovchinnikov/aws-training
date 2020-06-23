@@ -10,11 +10,17 @@ exports.handler = async function (event: any) {
         const response = await db.scan(params).promise();
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            },
             body: JSON.stringify(response.Items)
         };
     } catch (dbError) {
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            },
             body: JSON.stringify(dbError)
         };
     }

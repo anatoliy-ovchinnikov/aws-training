@@ -30,11 +30,17 @@ exports.handler = async function (event: any) {
         if (err) {
             return {
                 statusCode: 400,
+                headers: {
+                    "Access-Control-Allow-Origin": "*"
+                },
                 body: JSON.stringify(err) + ' - error object'
             }
         } else {
             return {
                 statusCode: 200,
+                headers: {
+                    "Access-Control-Allow-Origin": "*"
+                },
                 body: {
                     id: imageId,
                     data: JSON.stringify(data)

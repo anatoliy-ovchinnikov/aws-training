@@ -5,11 +5,17 @@ const saveToDb = async function (db: any, params: any) {
         await db.put(params).promise();
         return {
             statusCode: 201,
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            },
             body: ''
         };
     } catch (dbError) {
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            },
             body: dbError.message
         };
     }
