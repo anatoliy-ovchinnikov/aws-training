@@ -10,11 +10,11 @@ class DataDropDown extends React.Component<DropDownDataPropsModel, {}> {
     render() {
         return (
             <FormControl>
-                <InputLabel id="data-select-label">Select data</InputLabel>
+                <InputLabel id="data-select-label">Select item</InputLabel>
                 <Select labelId="data-select-label" id="data-select" onChange={this.props.onSelect}>
                     {this.props.items.map(item => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)}
                 </Select>
-                <FormHelperText>Please select data to see image</FormHelperText>
+                <FormHelperText>Please select item to see image</FormHelperText>
             </FormControl>
         );
     }

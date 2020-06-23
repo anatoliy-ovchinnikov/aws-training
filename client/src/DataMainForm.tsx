@@ -3,6 +3,12 @@ import ApiService from './service/ApiService';
 import DataDropDown from './DataDropDown';
 import DropDownDataStateModel from './model/DropDownDataStateModel';
 import ModalButton from './ModalButton'
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props: any) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
     private api: ApiService = new ApiService();
@@ -25,7 +31,8 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
         super(props);
         this.state = {
             items: [],
-            selectedLink: ''
+            selectedLink: '',
+            open: false
         }
         this.onSelect = this.onSelect.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -43,7 +50,7 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
 
     onSelect = (event: any) => {
         const selectedItem = this.state.items.find(e => e.id === event.target.value);
-        if(!selectedItem) {
+        if (!selectedItem) {
             return;
         }
 
@@ -62,15 +69,28 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
                 this.api.SaveData(data)
                     .then(() => {
                         var items = this.state.items.slice();
-                        this.setState({ items: [...items, data] });
+                        this.setState({ items: [...items, data], open: true });
                         callback();
                     })
             })
     }
 
+    handleClose = () => {
+        this.setState({ open: false });
+    };
+
     render() {
         return (
             <div>
+                <Snackbar
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    open={this.state.open}
+                    autoHideDuration={2000}
+                    onClose={this.handleClose}>
+                    <Alert onClose={this.handleClose} severity="success">
+                        Successfully saved!
+                    </Alert>
+                </Snackbar>
                 <div style={this.styles.actionContainer}>
                     <div style={this.styles.addButton}>
                         <ModalButton onSubmit={this.onSubmit} />
@@ -85,7 +105,7 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
     async componentDidMount() {
         await this.api.GetDataList()
             .then((data) => {
-                this.setState({ items: data })
+                this.setState({ items: data.sort((a, b) => (a.name > b.name ? 1 : -1)) })
             });
     }
 }

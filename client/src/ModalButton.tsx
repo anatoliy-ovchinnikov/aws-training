@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { Button, Fade, Modal, FormControl, InputLabel, Input } from '@material-ui/core';
+import { Button, Fade, Modal, FormControl, InputLabel, Input, CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -15,6 +15,11 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2, 4, 3),
     },
     submitButton: {
+        marginRight: theme.spacing(2)
+    },
+    submitContainer: {
+        display: 'flex',
+        alignItems: 'center',
         marginTop: theme.spacing(4)
     }
 }));
@@ -24,6 +29,7 @@ export default function ModalButton(props: any) {
     const [open, setOpen] = React.useState(false);
     const [name, setNameField] = React.useState("");
     const [file, setFileField] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
 
     const handleOpen = () => {
         setOpen(true);
@@ -42,6 +48,7 @@ export default function ModalButton(props: any) {
     }
 
     const onSubmit = (event: any) => {
+        setLoading(true);
         event.preventDefault();
         props.onSubmit({ name: name, file: file }, handleClose);
     };
@@ -76,10 +83,11 @@ export default function ModalButton(props: any) {
                                     <Input id="file" name="file" type="file" inputProps={{ accept: 'image/*' }} required={true} onChange={handleFileChange}/>
                                 </FormControl>
                             </div>
-                            <div>
-                                <Button variant="contained" color="primary" type="submit" className={classes.submitButton}>
+                            <div className={classes.submitContainer}>
+                                <Button variant="contained" color="primary" type="submit" disabled={loading} className={classes.submitButton}>
                                     Submit
                                 </Button>
+                                {loading ? <CircularProgress /> : null}
                             </div>
                         </form>
                     </div>
