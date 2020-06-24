@@ -37,6 +37,7 @@ export default function ModalButton(props: any) {
 
     const handleClose = () => {
         setOpen(false);
+        setLoading(false);
     };
 
     function handleNameChange(event:any) {

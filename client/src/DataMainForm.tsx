@@ -3,7 +3,7 @@ import ApiService from './service/ApiService';
 import DataDropDown from './DataDropDown';
 import DropDownDataStateModel from './model/DropDownDataStateModel';
 import ModalButton from './ModalButton'
-import Snackbar from '@material-ui/core/Snackbar';
+import { Snackbar, CircularProgress } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 
 function Alert(props: any) {
@@ -32,7 +32,8 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
         this.state = {
             items: [],
             selectedLink: '',
-            open: false
+            open: false,
+            loading: false
         }
         this.onSelect = this.onSelect.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -49,6 +50,7 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
     }
 
     onSelect = (event: any) => {
+        this.setState({ loading: true, selectedLink: '' });
         const selectedItem = this.state.items.find(e => e.id === event.target.value);
         if (!selectedItem) {
             return;
@@ -57,7 +59,7 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
         this.api.GetImageById(selectedItem.id)
             .then((data) => {
                 const base64String = this.arrayBufferToBase64(data.Body.data);
-                this.setState({ selectedLink: "data:image/png;base64," + base64String })
+                this.setState({ selectedLink: "data:image/png;base64," + base64String, loading: false });
             });
     }
 
@@ -97,6 +99,7 @@ class DataMainForm extends React.Component<{}, DropDownDataStateModel> {
                     </div>
                     <DataDropDown items={this.state.items} onSelect={this.onSelect} />
                 </div>
+                {this.state.loading ? <CircularProgress /> : null}
                 <img src={this.state.selectedLink} style={this.styles.imgControl} alt="" />
             </div>
         )
